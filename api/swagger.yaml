@@ -1,0 +1,299 @@
+---
+swagger: "2.0"
+info:
+  version: "1.0.0"
+  title: "Gateway controller"
+  x-ibm-name: "gateway-controller"
+basePath: "/gateway"
+consumes:
+- "application/json"
+produces:
+- "application/json"
+paths:
+  /domains/{namespace}:
+    get:
+      tags:
+      - "domains"
+      summary: "Gets all configured domains in a given namespace"
+      operationId: "getDomains"
+      parameters:
+      - name: "namespace"
+        in: "path"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "200 OK"
+      x-swagger-router-controller: "Domains"
+  /domains/{namespace}/{slug}:
+    get:
+      tags:
+      - "domains"
+      summary: "Retrieves information about a configured domain within the namespace"
+      operationId: "getDomain"
+      parameters:
+      - name: "namespace"
+        in: "path"
+        description: "The namespace owning the domain"
+        required: true
+        type: "string"
+      - name: "slug"
+        in: "path"
+        description: "The utf-8 slug of the actual domain name"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "200 OK"
+          schema:
+            $ref: "#/definitions/Domain"
+      x-swagger-router-controller: "Domains"
+    post:
+      tags:
+      - "domains"
+      summary: "Add a new domain"
+      operationId: "createDomain"
+      parameters:
+      - name: "namespace"
+        in: "path"
+        required: true
+        type: "string"
+      - name: "slug"
+        in: "path"
+        required: true
+        type: "string"
+      - in: "body"
+        name: "payload"
+        required: false
+        schema:
+          $ref: "#/definitions/Domain"
+      responses:
+        200:
+          description: "200 OK"
+      x-swagger-router-controller: "Domains"
+    put:
+      tags:
+      - "domains"
+      summary: "Update a domain's configuration"
+      operationId: "updateDomain"
+      parameters:
+      - name: "namespace"
+        in: "path"
+        required: true
+        type: "string"
+      - name: "slug"
+        in: "path"
+        required: true
+        type: "string"
+      - in: "body"
+        name: "payload"
+        required: false
+        schema:
+          $ref: "#/definitions/Domain"
+      responses:
+        200:
+          description: "200 OK"
+          schema:
+            $ref: "#/definitions/Domain"
+      x-swagger-router-controller: "Domains"
+    delete:
+      tags:
+      - "domains"
+      summary: "Deletes a custom domain and associated metadata"
+      operationId: "deleteDomain"
+      parameters:
+      - name: "namespace"
+        in: "path"
+        required: true
+        type: "string"
+      - name: "slug"
+        in: "path"
+        required: true
+        type: "string"
+      responses:
+        204:
+          description: "204 No content"
+      x-swagger-router-controller: "Domains"
+  /domains/{namespace}/{slug}/certs:
+    get:
+      tags:
+      - "domains"
+      summary: "Retrieves summary information about the certificates that are part\
+        \ of this domain. Public certs may be retrieved, but private ones will only\
+        \ include the original filename."
+      operationId: "getDomainCerts"
+      parameters:
+      - name: "namespace"
+        in: "path"
+        description: "The namespace owning the domain"
+        required: true
+        type: "string"
+      - name: "slug"
+        in: "path"
+        description: "The utf-8 slug of the actual domain name"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "200 OK"
+      x-swagger-router-controller: "Domains"
+  /routes/{namespace}:
+    get:
+      tags:
+      - "routes"
+      summary: "Retrieves all configured routes for a given namespace"
+      operationId: "getRoutes"
+      parameters:
+      - name: "namespace"
+        in: "path"
+        description: "The unique namespace in which this route should exist"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "200 OK"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Route"
+        default:
+          description: "Error"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+      x-swagger-router-controller: "Routes"
+    post:
+      tags:
+      - "routes"
+      summary: "Create a new route"
+      operationId: "createRoute"
+      parameters:
+      - name: "namespace"
+        in: "path"
+        description: "The unique namespace in which this route should exist"
+        required: true
+        type: "string"
+      - in: "body"
+        name: "payload"
+        required: false
+        schema:
+          $ref: "#/definitions/Route"
+      responses:
+        200:
+          description: "200 OK"
+      x-swagger-router-controller: "Routes"
+  /routes/{namespace}/{id}:
+    get:
+      tags:
+      - "routes"
+      operationId: "getRoute"
+      parameters:
+      - name: "namespace"
+        in: "path"
+        description: "The unique namespace in which this route should exist"
+        required: true
+        type: "string"
+      - name: "id"
+        in: "path"
+        description: "The computed ID of the route, as a form of: `incomingPath`"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "200 OK"
+          schema:
+            $ref: "#/definitions/Route"
+      x-swagger-router-controller: "Routes"
+    put:
+      tags:
+      - "routes"
+      summary: "Update an existing route"
+      operationId: "updateRoute"
+      parameters:
+      - name: "namespace"
+        in: "path"
+        description: "The unique namespace in which this route should exist"
+        required: true
+        type: "string"
+      - name: "id"
+        in: "path"
+        description: "The computed ID of the route, as a form of: `incomingPath`"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "200 OK"
+      x-swagger-router-controller: "Routes"
+    delete:
+      tags:
+      - "routes"
+      summary: "Delete the specified route"
+      operationId: "deleteRoute"
+      parameters:
+      - name: "namespace"
+        in: "path"
+        description: "The unique namespace in which this route should exist"
+        required: true
+        type: "string"
+      - name: "id"
+        in: "path"
+        description: "The computed ID of the route, as a form of: `incomingPath`"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "200 OK"
+      x-swagger-router-controller: "Routes"
+securityDefinitions:
+  apiKey:
+    type: "apiKey"
+    name: "X-Api-Key"
+    in: "header"
+definitions:
+  Policy:
+    properties:
+      value:
+        type: "object"
+        properties: {}
+      type:
+        type: "string"
+  Domain:
+    properties:
+      slug:
+        type: "string"
+      namespace:
+        type: "string"
+      domain:
+        type: "string"
+  ErrorResponse:
+    properties:
+      statusCode:
+        type: "string"
+      message:
+        type: "string"
+  Route:
+    required:
+    - "backendUrl"
+    - "gatewayMethod"
+    - "gatewayPath"
+    properties:
+      backendMethod:
+        type: "string"
+      backendUrl:
+        type: "string"
+      policies:
+        type: "array"
+        items:
+          $ref: "#/definitions/Policy"
+      id:
+        type: "string"
+      namespace:
+        type: "string"
+      gatewayPath:
+        type: "string"
+      gatewayMethod:
+        type: "string"
+x-ibm-configuration:
+  assembly:
+    execute:
+    - invoke:
+        target-url: "$(target-url)$(request.path)"
